@@ -29,16 +29,16 @@ jobs:
       WORKSPACE: ${{ github.workspace }}
       GRADLE_OPTS: -Xmx1500m -Dfile.encoding=UTF-8
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@1df8dbefe2a8cbc99770194893dd902763bee34b # v3
         with:
           distribution: 'adopt'
           java-version: ${{ matrix.java }}
       - name: Run Tests
         if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
         id: tests
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@3fbe033aaae657f011f88f29be9e65ed26bd29ef # v2
         with:
           arguments: check
         env:
@@ -47,7 +47,7 @@ jobs:
       - name: Run Build
         if: github.event_name == 'push'
         id: build
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@3fbe033aaae657f011f88f29be9e65ed26bd29ef # v2
         env:
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
           GRADLE_ENTERPRISE_BUILD_CACHE_NODE_USER: ${{ secrets.GRADLE_ENTERPRISE_BUILD_CACHE_NODE_USER }}
@@ -56,13 +56,13 @@ jobs:
           arguments: build
       - name: Publish Test Report
         if: steps.build.outcome == 'failure' || steps.tests.outcome == 'failure'
-        uses: scacap/action-surefire-report@v1
+        uses: scacap/action-surefire-report@be8172cc301d1805659f46260815db3e9ad574b2 # v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           report_paths: '**/build/test-results/test/TEST-*.xml'
       - name: Publish to repo.grails.org
         id: publish
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@3fbe033aaae657f011f88f29be9e65ed26bd29ef # v2
         if: steps.build.outcome == 'success' && github.event_name == 'push' && matrix.java == '8'
         env:
           ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
